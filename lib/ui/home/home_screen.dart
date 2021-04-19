@@ -102,7 +102,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else {
                                       return SliverToBoxAdapter(
                                         child: Center(
-                                          child: Text("No data found"),
+                                          child: Column(
+                                            children: [
+                                              Text("No data found"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              LinearProgressIndicator()
+                                            ],
+                                          ),
                                         ),
                                       );
                                     }
@@ -149,10 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ));
 
-                              setState(() {
-                                _selectedItems.clear();
-                                _selectedImageList.clear();
-                              });
+                              //not being deleted from firestore if when using this
+                              // setState(() {
+                              //   _selectedItems.clear();
+                              //   _selectedImageList.clear();
+                              // });
                             }
                           },
                           textColor: Colors.blue,
@@ -161,10 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             print("Count is: ${_selectedImageList.length}");
                             _bloc.add(ImageDeletedEvent(_selectedImageList));
-                            setState(() {
-                              _selectedItems.clear();
-                              _selectedImageList.clear();
-                            });
+                            // _selectedItems.clear();
+                            // _selectedImageList.clear();
                           },
                           color: Colors.blue,
                           textColor: Colors.white,

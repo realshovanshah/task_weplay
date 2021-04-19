@@ -53,7 +53,6 @@ class ImageService {
           await _storageSnapshot.child(currentImage.id).delete().then(
             (value) async {
               var batch = _db.batch();
-              print(currentImage.id);
 
               var imageRef = _db.collection("images").doc(currentImage.id);
               batch.delete(imageRef);
