@@ -8,7 +8,8 @@ import 'package:task_weplay/bloc/image_bloc.dart';
 import 'package:task_weplay/utilities/utils.dart';
 
 class UploadScreen extends StatefulWidget {
-  UploadScreen({Key key}) : super(key: key);
+  UploadScreen({Key key, this.text}) : super(key: key);
+  final String text;
 
   @override
   _UploadScreenState createState() => _UploadScreenState();
@@ -18,14 +19,16 @@ class _UploadScreenState extends State<UploadScreen> {
   bool uploading = false;
   final picker = ImagePicker();
   List<File> _images = [];
+
   @override
   Widget build(BuildContext context) {
     return Builder(
       builder: (BuildContext context) {
         final imageBloc = BlocProvider.of<ImageBloc>(context);
+        String text;
         return Scaffold(
             appBar: AppBar(
-              title: Text('Add Image'),
+              title: Text(widget.text),
               actions: [
                 FlatButton(
                     onPressed: () {

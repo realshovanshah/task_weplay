@@ -25,7 +25,7 @@ class ImageService {
           await snapshot.ref.getDownloadURL().then(
             (value) async {
               var batch = _db.batch();
-              var imageRef = _db.collection("images").doc();
+              var imageRef = _db.collection("images").doc(fileName);
               var imageModel = ImageModel(fileName, files[i].path, value);
               batch.set(imageRef, imageModel.toMap());
               batch
@@ -49,17 +49,17 @@ class ImageService {
     try {
       if (images != null) {
         for (var i = 0; i < images.length; i++) {
-          var fileName = images[i].hashCode.toString();
-          var snapshot =
-              await _storageSnapshot.child(images[0].imageUrl).delete().then(
+          var currentImage = images[i];
+          await _storageSnapshot.child(currentImage.id).delete().then(
             (value) async {
               var batch = _db.batch();
-              var imageRef = _db.collection("images").doc();
-              // var imageModel = ImageModel(fileName, images[i].path, value);
-              // batch.set(imageRef, imageModel.toMap());
+              print(currentImage.id);
+
+              var imageRef = _db.collection("images").doc(currentImage.id);
+              batch.delete(imageRef);
               batch
                   .commit()
-                  .then((value) => debugPrint("Batch upload success"));
+                  .then((value) => debugPrint("Batch delete success"));
               return;
             },
             onError: (e) => print("Error" + e.toString()),

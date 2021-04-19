@@ -9,26 +9,52 @@ import 'package:task_weplay/ui/login/login_screen.dart';
 import 'bloc/image_bloc.dart';
 
 // Program to count the number of letter and occurance of it in the String.
+void findLetterOccurance() {
+  final result = {};
 
-//  final result = {};
+  String test =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
 
-//   String test = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
+  test.splitMapJoin(
+    RegExp("[a-zA-z]"),
+    onMatch: (match) {
+      var matchedLetter = match.group(0);
+      result.keys.contains(matchedLetter)
+          ? result[matchedLetter] += 1
+          : result[matchedLetter] = 1;
+      return "";
+    },
+  );
+  print("Occurance count of each letter: " + result.toString());
+}
 
-//   test.splitMapJoin(
-//     RegExp("[a-zA-z]"),
-//     onMatch: (match) {
-//       var matchedLetter = match.group(0);
-//       result.keys.contains(matchedLetter)? result[matchedLetter] += 1: result[matchedLetter] = 1;
-//       return "";
-//     },
-//   );
+void group() {
+  var array = [1, 5, 7, 8, 0, 3, 4, 11, 23, 13, 12];
+  array.sort();
+  var newArray = [];
+  var first = array[0];
+  var last = array[0];
+  array.sort();
+  for (var n in array.sublist(1)) {
+    if (n - 1 == last) {
+      last = n;
+    } else {
+      newArray.add(first.toString() + "-" + last.toString());
+      first = last = n;
+    }
+  }
+  newArray.add(first);
+  newArray.add(last);
 
-//   print(result);
+  print("Collapsed string of numbers: " + newArray.toString());
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
+  findLetterOccurance();
+  group();
 }
 
 class MyApp extends StatelessWidget {

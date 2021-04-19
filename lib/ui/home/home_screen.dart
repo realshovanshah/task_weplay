@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String imageUrl;
   final _imageService = ImageService();
   List<int> _selectedItems = List<int>();
+  List<ImageModel> _selectedImageList = List<ImageModel>();
   var _isOptionsVisible = true;
 
   @override
@@ -88,9 +89,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         delegate: SliverChildBuilderDelegate(
                                           (BuildContext context, int index) {
                                             return ImageListItem(
-                                              imageUrl:
-                                                  snapshot.data[index].imageUrl,
+                                              imageModel: snapshot.data[index],
                                               selectedItems: _selectedItems,
+                                              selectedImageList:
+                                                  _selectedImageList,
                                               index: index,
                                             );
                                           },
@@ -106,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     }
                                   });
                             } else {
-                              CircularProgressIndicator();
+                              Center(child: CircularProgressIndicator());
                             }
                           },
                         )
@@ -118,18 +120,51 @@ class _HomeScreenState extends State<HomeScreen> {
                       Spacer(),
                       FlatButton(
                           onPressed: () {
-                            return Utils.showSnackbar(
-                                context, "No image is selected.");
+                            if (_selectedItems.isEmpty) {
+                              return Utils.showSnackbar(
+                                  context, "No image is selected.");
+                            } else {
+                              setState(() {
+                                _selectedItems.clear();
+                                _selectedImageList.clear();
+                              });
+                            }
                           },
                           textColor: Colors.blue,
                           child: Text('Cancel')),
                       FlatButton(
-                          onPressed: () => true,
+                          onPressed: () {
+                            if (_selectedItems.isEmpty) {
+                              return Utils.showSnackbar(
+                                  context, "No image is selected.");
+                            } else {
+                              _bloc.add(ImageDeletedEvent(_selectedImageList));
+
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: BlocProvider.of<ImageBloc>(context),
+                                  child: UploadScreen(
+                                    text: "Choose images to update with.",
+                                  ),
+                                ),
+                              ));
+
+                              setState(() {
+                                _selectedItems.clear();
+                                _selectedImageList.clear();
+                              });
+                            }
+                          },
                           textColor: Colors.blue,
-                          child: Text('Edit')),
+                          child: Text('Update')),
                       RaisedButton(
                           onPressed: () {
-                            _bloc.add(ImageDeletedEvent(_selectedItems));
+                            print("Count is: ${_selectedImageList.length}");
+                            _bloc.add(ImageDeletedEvent(_selectedImageList));
+                            setState(() {
+                              _selectedItems.clear();
+                              _selectedImageList.clear();
+                            });
                           },
                           color: Colors.blue,
                           textColor: Colors.white,
@@ -165,7 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => BlocProvider.value(
                             value: BlocProvider.of<ImageBloc>(context),
-                            child: UploadScreen(),
+                            child: UploadScreen(
+                              text: "Add Images",
+                            ),
                           ),
                         ));
                       },
@@ -184,15 +221,15 @@ class ImageListItem extends StatefulWidget {
     Key key,
     @required List<int> selectedItems,
     @required this.index,
-    this.imageUrl,
-    this.imagePath,
+    this.imageModel,
+    this.selectedImageList,
   })  : _selectedItems = selectedItems,
         super(key: key);
 
   final List<int> _selectedItems;
+  final List<ImageModel> selectedImageList;
   final int index;
-  final String imageUrl;
-  final String imagePath;
+  final ImageModel imageModel;
 
   @override
   _ImageListItemState createState() => _ImageListItemState();
@@ -206,6 +243,7 @@ class _ImageListItemState extends State<ImageListItem> {
         if (widget._selectedItems.contains(widget.index)) {
           setState(() {
             widget._selectedItems.removeWhere((val) => val == widget.index);
+            widget.selectedImageList.remove(widget.imageModel);
           });
         }
       },
@@ -213,6 +251,7 @@ class _ImageListItemState extends State<ImageListItem> {
         if (!widget._selectedItems.contains(widget.index)) {
           setState(() {
             widget._selectedItems.add(widget.index);
+            widget.selectedImageList.add(widget.imageModel);
           });
         }
       },
@@ -223,14 +262,13 @@ class _ImageListItemState extends State<ImageListItem> {
             ? Colors.blue.withOpacity(0.7)
             : Colors.blue.withOpacity(0.2),
         child: ListTile(
-          leading: (widget.imageUrl == null)
+          leading: (widget.imageModel.imageUrl == null)
               ? FlutterLogo(
                   size: 100,
                 )
-              : Image.network(
-                  widget.imageUrl,
-                ),
-          subtitle: Text("${widget.index}th item Loading"),
+              : Image.network(widget.imageModel.imageUrl,
+                  height: 100, width: 100, fit: BoxFit.cover),
+          subtitle: Text(widget.imageModel.id),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 1, top: 6),
             child: Text(
