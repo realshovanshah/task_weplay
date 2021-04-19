@@ -1,0 +1,1 @@
+const kFirebaseStorageFolder = "user-images";
