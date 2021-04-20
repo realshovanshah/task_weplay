@@ -31,16 +31,29 @@ class ImageAddedEvent extends ImageEvent {
   String toString() => 'ImageAdded { Image: $images }';
 }
 
+class ImageUpdateClickedEvent extends ImageEvent {
+  final List<ImageModel> images;
+
+  const ImageUpdateClickedEvent(this.images);
+
+  @override
+  List<Object> get props => [images];
+
+  @override
+  String toString() => 'ImageUpdated { Image: $images }';
+}
+
 class ImageUpdatedEvent extends ImageEvent {
-  final ImageModel image;
+  final List<File> images;
+  final List<String> ids;
 
-  const ImageUpdatedEvent(this.image);
-
-  @override
-  List<Object> get props => [image];
+  const ImageUpdatedEvent(this.images, this.ids);
 
   @override
-  String toString() => 'ImageUpdated { Image: $image }';
+  List<Object> get props => [images, ids];
+
+  @override
+  String toString() => 'ImageUpdated { Image: $images }';
 }
 
 class ImageDeletedEvent extends ImageEvent {

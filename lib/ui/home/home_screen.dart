@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     final _bloc = BlocProvider.of<ImageBloc>(context);
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 500, minHeight: 500),
+                    constraints: BoxConstraints(
+                        maxHeight: screenHeight * 0.5,
+                        minHeight: screenHeight * 0.5),
                     child: CustomScrollView(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -116,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     }
                                   });
                             } else {
-                              Center(child: CircularProgressIndicator());
+                              Center(child: LinearProgressIndicator());
                             }
                           },
                         )
@@ -146,9 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Utils.showSnackbar(
                                   context, "No image is selected.");
                             } else {
-                              _bloc.add(ImageDeletedEvent(_selectedImageList));
-
                               Navigator.of(context).push(MaterialPageRoute(
+                                settings: RouteSettings(
+                                    arguments: List<String>.from(
+                                        _selectedImageList.map((e) => e.id))),
                                 builder: (_) => BlocProvider.value(
                                   value: BlocProvider.of<ImageBloc>(context),
                                   child: UploadScreen(
@@ -156,12 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ));
-
-                              //not being deleted from firestore if when using this
-                              // setState(() {
-                              //   _selectedItems.clear();
-                              //   _selectedImageList.clear();
-                              // });
                             }
                           },
                           textColor: Colors.blue,
@@ -179,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(width: 20)
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: screenHeight * 0.01),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: RaisedButton(

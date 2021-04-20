@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,18 @@ void findLetterOccurance() {
   print("Occurance count of each letter: " + result.toString());
 }
 
-void group() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+  findLetterOccurance();
+  group().forEach((element) {
+    print(element);
+  });
+}
+
+Stream<String> group() async* {
+  print("Shortened numbers are: ");
   var array = [1, 5, 7, 8, 0, 3, 4, 11, 23, 13, 12];
   array.sort();
   var newArray = [];
@@ -39,22 +51,16 @@ void group() {
     if (n - 1 == last) {
       last = n;
     } else {
-      newArray.add(first.toString() + "-" + last.toString());
+      yield* Stream.value(first.toString() + "-" + last.toString());
+
+      // newArray.add(first.toString() + "-" + last.toString());
       first = last = n;
     }
   }
-  newArray.add(first);
-  newArray.add(last);
+  yield* Stream.value(last.toString());
+  // newArray.add(last);
 
   print("Collapsed string of numbers: " + newArray.toString());
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
-  findLetterOccurance();
-  group();
 }
 
 class MyApp extends StatelessWidget {
@@ -63,6 +69,8 @@ class MyApp extends StatelessWidget {
   final _imageService = ImageService();
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       title: 'Weplay Task',
       theme: ThemeData(
         primarySwatch: Colors.blue,

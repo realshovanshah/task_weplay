@@ -35,7 +35,12 @@ class _UploadScreenState extends State<UploadScreen> {
                       setState(() {
                         uploading = true;
                       });
-                      imageBloc.add(ImageAddedEvent(_images));
+                      (widget.text == 'Add Images')
+                          ? imageBloc.add(ImageAddedEvent(_images))
+                          : imageBloc.add(ImageUpdatedEvent(
+                              _images,
+                              ModalRoute.of(context).settings.arguments
+                                  as List<String>));
                       Navigator.of(context).pop();
                     },
                     child: Text(
@@ -49,6 +54,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 Container(
                   padding: EdgeInsets.all(24),
                   child: GridView.builder(
+                      shrinkWrap: true,
                       itemCount: _images.length + 1,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3),

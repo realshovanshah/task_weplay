@@ -27,6 +27,9 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     if (event is ImageLoadEvent) {
       yield* _mapLoadImageToState(event);
     }
+    if (event is ImageUpdatedEvent) {
+      yield* _mapUpdateImageToState(event);
+    }
   }
 
   Stream<ImageState> _mapDeleteImageToState(ImageDeletedEvent event) async* {
@@ -40,5 +43,10 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   Stream<ImageState> _mapLoadImageToState(ImageLoadEvent event) async* {
     print("called this");
     yield ImageLoadSuccessState(_imageService.getImages());
+  }
+
+  Stream<ImageState> _mapUpdateImageToState(ImageUpdatedEvent event) async* {
+    print("called this");
+    _imageService.updateImages(event.images, event.ids);
   }
 }
