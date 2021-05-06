@@ -25,7 +25,7 @@ class ImageService {
           await snapshot.ref.getDownloadURL().then(
             (value) async {
               var imageRef = _db.collection("images").doc(fileName);
-              var imageModel = ImageModel(fileName, files[i].path, value);
+              var imageModel = ImageModel(fileName, value, "50%", 1, false);
               batch.set(imageRef, imageModel.toMap());
 
               return;
@@ -55,7 +55,7 @@ class ImageService {
           await snapshot.ref.getDownloadURL().then(
             (value) async {
               var imageRef = _db.collection("images").doc(fileName);
-              var imageModel = ImageModel(fileName, files[i].path, value);
+              var imageModel = ImageModel(fileName, value, "50%", 1, false);
               batch.update(imageRef, imageModel.toMap());
 
               return;
@@ -98,8 +98,8 @@ class ImageService {
     }
   }
 
-  Stream<List<ImageModel>> getImages() {
-    return _db.collection("images").snapshots().map((snapshots) {
+  Future<List<ImageModel>> getImages() {
+    return _db.collection("images").get().then((snapshots) {
       return snapshots.docs.map(
         (doc) {
           print(doc.data().values);

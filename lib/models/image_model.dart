@@ -5,24 +5,34 @@ import 'package:equatable/equatable.dart';
 
 class ImageModel extends Equatable {
   final String id;
-  final String imagePath;
   final String imageUrl;
+  final String fillStatus;
+  final int fillCount;
+  final bool isOpen;
+  bool clicked = false;
 
-  ImageModel(this.id, this.imagePath, this.imageUrl);
+  ImageModel(
+      this.id, this.imageUrl, this.fillStatus, this.fillCount, this.isOpen,
+      {this.clicked});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'imagePath': imagePath,
       'imageUrl': imageUrl,
+      'fillStatus': fillStatus,
+      'fillCount': fillCount,
+      'isOpen': isOpen,
     };
   }
 
   factory ImageModel.fromMap(Map<String, dynamic> map) {
     return ImageModel(
       map['id'],
-      map['imagePath'],
       map['imageUrl'],
+      map['fillStatus'],
+      map['fillCount'],
+      map['isOpen'],
+      clicked: false,
     );
   }
 
@@ -33,12 +43,16 @@ class ImageModel extends Equatable {
 
   static ImageModel fromSnapshot(DocumentSnapshot snap) {
     return ImageModel(
-      snap.data()['id'],
-      snap.data()['imagePath'],
-      snap.data()['imageUrl'],
+      snap['id'],
+      snap['imageUrl'],
+      snap['fillStatus'],
+      snap['fillCount'],
+      snap['isOpen'],
+      clicked: false,
     );
   }
 
   @override
-  List<Object> get props => [id, imagePath, imageUrl];
+  List<Object> get props =>
+      [id, imageUrl, fillStatus, fillCount, isOpen, clicked];
 }

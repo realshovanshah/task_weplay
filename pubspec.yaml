@@ -25,13 +25,14 @@ dependencies:
     sdk: flutter
   cloud_firestore: any
   cupertino_icons: ^1.0.0
-  device_preview: any
+  # device_preview: any
   equatable: any
   firebase_auth: any
   firebase_core: any
   firebase_storage: any
   flutter_bloc: any
   image_picker: any
+  multi_image_picker: any
   permission_handler: any
 
 dev_dependencies:

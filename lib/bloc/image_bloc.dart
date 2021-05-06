@@ -12,7 +12,7 @@ part 'image_state.dart';
 
 class ImageBloc extends Bloc<ImageEvent, ImageState> {
   final ImageService _imageService;
-  ImageBloc(this._imageService) : super(ImageLoadingState());
+  ImageBloc(this._imageService) : super(ImageEmptyState());
 
   @override
   Stream<ImageState> mapEventToState(
@@ -42,7 +42,13 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
   Stream<ImageState> _mapLoadImageToState(ImageLoadEvent event) async* {
     print("called this");
-    yield ImageLoadSuccessState(_imageService.getImages());
+    yield ImageLoadingState();
+    try {
+      final imageModelList = await _imageService.getImages();
+      yield ImageLoadSuccessState(images: imageModelList);
+    } catch (e) {
+      yield ImageLoadFailedState(e.toString());
+    }
   }
 
   Stream<ImageState> _mapUpdateImageToState(ImageUpdatedEvent event) async* {

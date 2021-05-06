@@ -1,8 +1,9 @@
-import 'package:device_preview/device_preview.dart';
+// import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_weplay/bloc/navigation_bloc.dart';
 import 'package:task_weplay/services/image_service.dart';
 import 'package:task_weplay/ui/home/home_screen.dart';
 import 'package:task_weplay/ui/login/login_screen.dart';
@@ -68,25 +69,30 @@ class MyApp extends StatelessWidget {
   @override
   final _imageService = ImageService();
   Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      title: 'Weplay Task',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (!snapshot.hasData) return LoginScreen();
-          return BlocProvider(
-            create: (context) => ImageBloc(_imageService),
-            child: HomeScreen(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ImageBloc(_imageService),
+        ),
+        BlocProvider(
+          create: (context) => NavigationBloc(_imageService),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Weplay Task',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+            if (!snapshot.hasData) return LoginScreen();
+            return HomeScreen(
               firebaseAuth: _firebaseAuth,
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

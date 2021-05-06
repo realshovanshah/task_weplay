@@ -43,6 +43,18 @@ class ImageUpdateClickedEvent extends ImageEvent {
   String toString() => 'ImageUpdated { Image: $images }';
 }
 
+class ImageUploadScreenNavigatedEvent extends ImageEvent {
+  final List<ImageModel> images;
+
+  const ImageUploadScreenNavigatedEvent(this.images);
+
+  @override
+  List<Object> get props => [images];
+
+  @override
+  String toString() => 'Update Navigated { Image: $images }';
+}
+
 class ImageUpdatedEvent extends ImageEvent {
   final List<File> images;
   final List<String> ids;

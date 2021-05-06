@@ -7,10 +7,21 @@ abstract class ImageState extends Equatable {
   List<Object> get props => [];
 }
 
-class ImageLoadSuccessState extends ImageState {
-  final Stream<List<ImageModel>> images;
+class ImageEmptyState extends ImageState {}
 
-  const ImageLoadSuccessState([this.images = const Stream.empty()]);
+class ImageLoadSuccessState extends ImageState {
+  final List<ImageModel> images;
+
+  const ImageLoadSuccessState({this.images});
+
+  @override
+  List<Object> get props => [images];
+}
+
+class SelectedImageLoadSuccessState extends ImageState {
+  final List<ImageModel> images;
+
+  const SelectedImageLoadSuccessState({this.images});
 
   @override
   List<Object> get props => [images];
@@ -18,4 +29,8 @@ class ImageLoadSuccessState extends ImageState {
 
 class ImageLoadingState extends ImageState {}
 
-class ImageLoadFailedState extends ImageState {}
+class ImageLoadFailedState extends ImageState {
+  final String errorMessage;
+
+  ImageLoadFailedState(this.errorMessage);
+}
